@@ -33,8 +33,41 @@ class MyHomePage extends StatelessWidget{
   Widget build(BuildContext context){
     return Scaffold(
         appBar: AppBar(title: Text(this.title)),
-        body:  Center(child: Image.asset("assets/smiley.png"))//Center(child: MyButton()),
+//        body: Center(child: ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",)),
+        body: ListView(
+          padding: EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 1.0),shrinkWrap: true,
+          children: <Widget>[
+            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+            Center(child: GestureDetector(
+                onTap: () {
+                  _showDialog(context);
+                },
+                child: Text( 'Hello World', )
+            ))
+          ],
+        ),
     );
+  }
+
+  void _showDialog(BuildContext context){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        title: new Text("Message"),
+        content: new Text("Hello World"),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text("Close"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    });
+
   }
 }
 
@@ -81,7 +114,6 @@ class ProductCard extends StatelessWidget{
   final int price;
   final String image;
 
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -89,7 +121,18 @@ class ProductCard extends StatelessWidget{
       padding: EdgeInsets.all(2),height: 120, child : Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-            Image.asset("assets/appimages/" + image), Expanded()
+            Image.asset("assets/smiley.png"), Expanded(
+              child : Container(
+                padding : EdgeInsets.all(5), child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(this.name, style: TextStyle(fontWeight:
+                      FontWeight.bold)), Text(this.description),
+                      Text("Price: " + this.price.toString()),
+                    ],
+              ),
+              )
+            )
           ],
         ),
       )

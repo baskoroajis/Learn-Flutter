@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'models/Product.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,26 +29,32 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget{
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
+  final List<Product> items = Product.getProducts();
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
         appBar: AppBar(title: Text(this.title)),
 //        body: Center(child: ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",)),
-        body: ListView(
-          padding: EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 1.0),shrinkWrap: true,
-          children: <Widget>[
-            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-            Center(child: GestureDetector(
-                onTap: () {
-                  _showDialog(context);
-                },
-                child: Text( 'Hello World', )
-            ))
-          ],
+        body: ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index){
+              return Container(child: ProductCard(item : items[index]),);
+            },
+
+//          padding: EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 1.0),shrinkWrap: true,
+//          children: <Widget>[
+//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
+//            Center(child: GestureDetector(
+//                onTap: () {
+//                  _showDialog(context);
+//                },
+//                child: Text( 'Hello World', )
+//            ))
+//          ],
         ),
     );
   }
@@ -107,12 +114,13 @@ class MyButton extends StatelessWidget{
 }
 
 class ProductCard extends StatelessWidget{
-  ProductCard({Key key,this.name,this.description,this.price,this.image}):super(key:key);
+  ProductCard({Key key,this.item}):super(key:key);
 
-  final String name;
-  final String description;
-  final int price;
-  final String image;
+//  final String name;
+//  final String description;
+//  final int price;
+//  final String image;
+  Product item;
 
   @override
   Widget build(BuildContext context) {
@@ -121,14 +129,14 @@ class ProductCard extends StatelessWidget{
       padding: EdgeInsets.all(2),height: 120, child : Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-            Image.asset("assets/smiley.png"), Expanded(
+            Image.asset("assets/"+item.image), Expanded(
               child : Container(
                 padding : EdgeInsets.all(5), child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Text(this.name, style: TextStyle(fontWeight:
-                      FontWeight.bold)), Text(this.description),
-                      Text("Price: " + this.price.toString()),
+                      Text(item.name, style: TextStyle(fontWeight:
+                      FontWeight.bold)), Text(item.description),
+                      Text("Price: " + item.price.toString()),
                     ],
               ),
               )

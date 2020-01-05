@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/Product.dart';
+import 'ProductDetail.dart';
+import 'RatingBox.dart';
 
 void main() => runApp(MyApp());
 
@@ -39,7 +41,17 @@ class MyHomePage extends StatelessWidget{
         body: ListView.builder(
             itemCount: items.length,
             itemBuilder: (context, index){
-              return Container(child: ProductCard(item : items[index]),);
+              return GestureDetector(
+                child: ProductCard(item : items[index]),
+                onTap: (){
+                  Navigator.push(
+                      context, MaterialPageRoute(
+//                      builder: (context) => ProductDetail(item: items[index]),
+                      builder: (context) => ProductDetail(item: items[index]),
+                  )
+                  );
+                }
+              );
             },
 
 //          padding: EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 1.0),shrinkWrap: true,
@@ -126,7 +138,7 @@ class ProductCard extends StatelessWidget{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      padding: EdgeInsets.all(2),height: 120, child : Card(
+      padding: EdgeInsets.all(2),height: 140, child : Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Image.asset("assets/"+item.image), Expanded(
@@ -137,6 +149,7 @@ class ProductCard extends StatelessWidget{
                       Text(item.name, style: TextStyle(fontWeight:
                       FontWeight.bold)), Text(item.description),
                       Text("Price: " + item.price.toString()),
+                      RatingBox()
                     ],
               ),
               )

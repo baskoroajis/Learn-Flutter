@@ -3,10 +3,16 @@ import 'models/Product.dart';
 import 'ProductDetail.dart';
 import 'RatingBox.dart';
 
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,46 +34,44 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatelessWidget{
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-  final List<Product> items = Product.getProducts();
+
+
+  List<Product> parseProduct(String responseBody){
+    final parsed = json.decode(responseBody).cast<Map<String,dynamic>>();
+    return parsed.map<Product>((json) => Product.fromMap(json)).toList();
+  }
+
+  Future<List<Product>> getProductsFromApi() async{
+    final response = await http.get('http://www.mocky.io/v2/5e12aed73100006600d47361');
+    if (response.statusCode == 200){
+      return parseProduct(response.body);
+    }
+    else {
+      throw Exception('Unable to fetch products from the REST API');
+    }
+  }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
         appBar: AppBar(title: Text(this.title)),
 //        body: Center(child: ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",)),
-        body: ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index){
-              return GestureDetector(
-                child: ProductCard(item : items[index]),
-                onTap: (){
-                  Navigator.push(
-                      context, MaterialPageRoute(
-//                      builder: (context) => ProductDetail(item: items[index]),
-                      builder: (context) => ProductDetail(item: items[index]),
-                  )
-                  );
-                }
-              );
-            },
+        body: Center(
+            child : FutureBuilder<List<Product>>(
+              future: getProductsFromApi(), builder: (context, snapshot){
+                  if (snapshot.hasError) print(snapshot.error);
+                    return snapshot.hasData ? ProductBoxList(items: snapshot.data) :
 
-//          padding: EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 1.0),shrinkWrap: true,
-//          children: <Widget>[
-//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-//            ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",),
-//            Center(child: GestureDetector(
-//                onTap: () {
-//                  _showDialog(context);
-//                },
-//                child: Text( 'Hello World', )
-//            ))
-//          ],
-        ),
+                  // return the ListView widget :
+                  Center(child: CircularProgressIndicator());
+              },
+            )
+        )
+        //ProductBoxList(getProductsFromApi())
     );
   }
 
@@ -121,6 +125,32 @@ class MyButton extends StatelessWidget{
             'OK',textAlign: TextAlign.center, style: TextStyle(color: Colors.black)
         ),
       ),
+    );
+  }
+}
+
+class ProductBoxList extends StatelessWidget{
+  ProductBoxList({Key key, this.items}):super(key:key);
+  final List<Product> items;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return  ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index){
+          return GestureDetector(
+              child: ProductCard(item : items[index]),
+              onTap: (){
+                Navigator.push(
+                    context, MaterialPageRoute(
+    //                      builder: (context) => ProductDetail(item: items[index]),
+                  builder: (context) => ProductDetail(item: items[index]),
+                )
+                );
+              }
+          );
+        }
     );
   }
 }

@@ -6,6 +6,7 @@ import 'RatingBox.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'SQLiteDBProvider.dart';
 
 void main() => runApp(MyApp());
 
@@ -62,7 +63,7 @@ class MyHomePage extends StatelessWidget{
 //        body: Center(child: ProductCard(name : "Baskoro", description : "Aji", price : 20000, image: "",)),
         body: Center(
             child : FutureBuilder<List<Product>>(
-              future: getProductsFromApi(), builder: (context, snapshot){
+              future: SQLiteDBProvider.db.getAllProducts(), builder: (context, snapshot){
                   if (snapshot.hasError) print(snapshot.error);
                     return snapshot.hasData ? ProductBoxList(items: snapshot.data) :
 
